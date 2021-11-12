@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
@@ -28,6 +29,10 @@ namespace dbApp1
         public virtual DbSet<Resort> Resorts { get; set; }
         public virtual DbSet<Ticket> Tickets { get; set; }
         public virtual DbSet<Worker> Workers { get; set; }
+        
+
+        public IQueryable<Hotel> CurrentStar(int StarsNumber) => FromExpression(() => CurrentStar(StarsNumber));
+        public IQueryable<Care> TICPR(int TicketId) => FromExpression(() => TICPR(TicketId));
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -41,6 +46,9 @@ namespace dbApp1
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Cyrillic_General_CI_AS");
+
+            modelBuilder.HasDbFunction(() => CurrentStar(default));
+            modelBuilder.HasDbFunction(() => TICPR(default));
 
             modelBuilder.Entity<Care>(entity =>
             {
